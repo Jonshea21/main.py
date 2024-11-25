@@ -1,0 +1,109 @@
+import os
+
+# File name for storing the allowed vehicles list
+file_name = "allowed_vehicles_list.txt"
+
+# Ensure the file exists and initialize it with some default vehicles if empty
+def initialize_file():
+    if not os.path.exists(file_name) or os.stat(file_name).st_size == 0:
+        with open(file_name, 'w') as file:
+            default_vehicles = [
+                'Ford F-150', 
+                'Chevrolet Silverado', 
+                'Tesla CyberTruck', 
+                'Toyota Tundra', 
+                'Rivian R1T', 
+                'Ram 1500'
+            ]
+            file.write('\n'.join(default_vehicles))
+
+# Read the vehicles from the file into a list
+def load_vehicles():
+    with open(file_name, 'r') as file:
+        return [line.strip() for line in file.readlines()]
+
+# Write the list of vehicles back to the file
+def save_vehicles(vehicles):
+    with open(file_name, 'w') as file:
+        file.write('\n'.join(vehicles))
+
+# Print menu options
+def print_menu():
+    print("********************************")
+    print("AutoCountry Vehicle Finder v0.4")
+    print("********************************")
+    print("Please Enter the following number below from the following menu:")
+    print("1. PRINT all Authorized Vehicles")
+    print("2. SEARCH for Authorized Vehicle")
+    print("3. ADD Authorized Vehicle")
+    print("4. DELETE Authorized Vehicle")
+    print("5. Exit")
+    print("********************************")
+
+# Print all authorized vehicles
+def print_vehicles():
+    vehicles = load_vehicles()
+    print("The AutoCountry sales manager has authorized the purchase and selling of the following vehicles:")
+    for vehicle in vehicles:
+        print(vehicle)
+
+# Search for a vehicle
+def search_vehicle(vehicle_name):
+    vehicles = load_vehicles()
+    if vehicle_name in vehicles:
+        return f"{vehicle_name} is an authorized vehicle."
+    else:
+        return f"{vehicle_name} is not an authorized vehicle; please check the spelling and try again."
+
+# Add a vehicle to the list
+def add_vehicle(vehicle_name):
+    vehicles = load_vehicles()
+    if vehicle_name not in vehicles:
+        vehicles.append(vehicle_name)
+        save_vehicles(vehicles)
+        print(f'You have added "{vehicle_name}" as an authorized vehicle.')
+    else:
+        print(f'Vehicle "{vehicle_name}" is already in the authorized list.')
+
+# Delete a vehicle from the list
+def delete_vehicle(vehicle_name):
+    vehicles = load_vehicles()
+    if vehicle_name in vehicles:
+        confirmation = input(f'Are you sure you want to remove "{vehicle_name}" from the Authorized Vehicles List? (yes/no): ').strip().lower()
+        if confirmation == 'yes':
+            vehicles.remove(vehicle_name)
+            save_vehicles(vehicles)
+            print(f'You have REMOVED "{vehicle_name}" as an authorized vehicle.')
+        else:
+            print('Vehicle removal cancelled.')
+    else:
+        print(f'"{vehicle_name}" is not in the list of authorized vehicles.')
+
+# Main function to handle the menu and user inputs
+def main():
+    initialize_file()
+    while True:
+        print_menu()
+        choice = input("Enter your choice: ").strip()
+        
+        if choice == "1":
+            print_vehicles()
+        elif choice == "2":
+            vehicle_name = input("Please Enter the full Vehicle name to search: ").strip()
+            result = search_vehicle(vehicle_name)
+            print(result)
+        elif choice == "3":
+            vehicle_name = input("Please Enter the full Vehicle name you would like to add: ").strip()
+            add_vehicle(vehicle_name)
+        elif choice == "4":
+            vehicle_name = input("Please Enter the full Vehicle name you would like to REMOVE: ").strip()
+            delete_vehicle(vehicle_name)
+        elif choice == "5":
+            print("Thank you for using the AutoCountry Vehicle Finder, good-bye!")
+            break
+        else:
+            print("Invalid input. Please select 1, 2, 3, 4, or 5.")
+
+# Entry point of the program
+if __name__ == "__main__":
+    main()
